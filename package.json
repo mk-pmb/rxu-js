@@ -1,7 +1,14 @@
 { "name": "rxu",
-  "version": "0.0.2",
-  "description": "misc regexp utils. (docs = TODO)",
-  "keywords": [ "regexp" ],
+  "version": "0.1.1",
+  "description": "misc regexp utils.",
+  "keywords": [
+    "RegExp", "regexp",
+    "body", "flags",
+    "join", "concat",
+    "before", "after",
+    "quotemeta", "preg_quote", "rgxdefuse", "rxquote",
+    "util", "utilities", "utility functions"
+  ],
 
   "author": "M.K. (https://github.com/mk-pmb)",
   "homepage": "https://github.com/mk-pmb/rxu-js#readme",
@@ -16,18 +23,14 @@
   "private": false, "license": "ISC",
 
   "main": "rxu.js",
-  "scripts": {
-    "test": "demo-util-160404-test-demos"
-  },
+  "scripts": { "test": "nodejs test.js" },
   "directories": {
     "doc": "doc",
     "test": "test"
   },
 
   "dependencies": {},
-  "devDependencies": {
-    "lib-demo-util-160404": "^0.1.0"
-  },
+  "devDependencies": {},
 
   "npm vs. BOM = Unexpected token": "-*- coding: UTF-8 -*-"
 }
