@@ -78,7 +78,7 @@ determine…
 
 ### rxu.contextSlots(m)
 Assuming that `m` is a result object from a successful RegExp match,
-sets some handy additional slots on `m`:
+set some handy additional slots on `m`, and return it.
 
   * `m['@']`: (int) Position of the match. Alias for `m.index`.
   * `m.end`: (int) Position of the first character after the match.

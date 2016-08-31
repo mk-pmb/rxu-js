@@ -1,5 +1,5 @@
 { "name": "rxu",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "misc regexp utils.",
   "keywords": [
     "RegExp", "regexp",
