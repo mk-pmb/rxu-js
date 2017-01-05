@@ -23,7 +23,7 @@
   "private": false, "license": "ISC",
 
   "main": "rxu.js",
-  "scripts": { "test": "nodejs test.js" },
+  "scripts": { "test": "nodejs test/all.js" },
   "directories": {
     "doc": "doc",
     "test": "test"
