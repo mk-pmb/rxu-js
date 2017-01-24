@@ -106,6 +106,7 @@ rxu.body = function rxu_body(rx) {
 rxu.flags = function rxu_flags(rx) {
   if (!isRgx(rx)) { return ''; }
   if (isStr(rx.flags)) { return rx.flags; }
+           // ^-- MSIE 6: not supported
   rx = String(rx);
   return rx.slice(rx.lastIndexOf('/') + 1);
 };
@@ -224,6 +225,7 @@ rxu.jsonquot = function (x) { return JSON.stringify(String(x)).slice(1, -1); };
 rxu.body.raw = function (rx, body) {
   if (!isRgx(rx)) { return String(rx); }
   body = rx.source;
+        // ^-- MSIE 6: supported!
   if (isStr(body)) { return body; }
   return String(rx).replace(/^\//, '').replace(/\/[a-z]*$/, '');
 };
