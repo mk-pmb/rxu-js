@@ -5,22 +5,21 @@
 var rxu = require('rxu'), eq = require('assert').deepStrictEqual;
 
 (function bodiesAndFlags() {
-  var rx;
+  function chk(rx, ok) {
+    eq([rxu.body(rx), rxu.flags(rx)], [ok.body, ok.flags]);
+    eq(Object.assign({}, rxu.splitBodyAndFlags(rx)), ok);
+  }
 
-  rx = /^hello\s(\brave |\new )*world$/mi;
-  eq([rxu.body(rx),                         rxu.flags(rx)],
-     ["^hello\\s(\\brave |\\new )*world$",  'im']);
+  chk(/^hello\s(\brave |\new )*world$/mi,
+    { body: "^hello\\s(\\brave |\\new )*world$", flags: 'im', delim: '/' });
   // Wonder about the flags re-ordering?
-  eq(String(rx).substr(-3), '/im');
+  eq(String(/mi/mi).slice(-3), '/im');
 
-  rx = new RegExp('', 'gi');
-  eq([rxu.body(rx), rxu.flags(rx)],
-     ['',           'gi']);
-
-  rx = /(?:)/m;
-  eq([rxu.body(rx), rxu.flags(rx)],
-     ['',           'm']);
-
+  chk(new RegExp('', 'gi'), { delim: '/', body: '', flags: 'gi' });
+  chk(/(?:)/m, { delim: '/', body: '', flags: 'm' });
+  chk('/(?:)/m', { delim: '/', body: '', flags: 'm' });
+  chk(':(?:):m', { delim: ':', body: '', flags: 'm' });
+  chk('~~~~', { delim: '~', body: '~~', flags: '' });
 }());
 
 (function joins() {

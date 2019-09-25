@@ -9,7 +9,7 @@ var EX = module.exports,
 readmd.replace(/\n#+ (rxu[ -\uFFFF]+)/g, function (fn, hl) {
   fn = hl.replace(/\.js\)$/, '').split(/\(test\//)[1];
   var oldFuncs = (EX[fn] || []);
-  hl = hl.split(/\s+\&nbsp;/)[0].replace(/\), /g, ')\n').split('\n');
+  hl = hl.split(/\s+\&nbsp;/)[0].replace(/\), /g, ')\n').split(/\n/);
   EX[fn] = oldFuncs.concat(hl);
 });
 

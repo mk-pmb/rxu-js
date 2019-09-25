@@ -2,7 +2,6 @@
 /* -*- tab-width: 2 -*- */
 'use strict';
 
-
 var objToStr = Function.call.bind(Object.prototype.toString),
   isArr = Array.isArray.bind(Array);
 
@@ -97,19 +96,29 @@ rxu.ifMatch = function rxu_ifMatch(text, rgx, thenFunc, elseFunc) {
 
 rxu.body = function rxu_body(rx) {
   if (!rx) { return ''; }
-  rx = rxu.body.raw(rx);
-  if (rx === '(?:)') { return ''; }
+  rx = rxu.cleanupBody(rxu.body.raw(rx));
   rx = rx.replace(/\n|\r/g, rxu.jsonquot);    // upgrade ES3+4 to ES5
   return rx;
 };
 
 rxu.flags = function rxu_flags(rx) {
-  if (!isRgx(rx)) { return ''; }
-  if (isStr(rx.flags)) { return rx.flags; }
-           // ^-- MSIE 6: not supported
-  rx = String(rx);
-  return rx.slice(rx.lastIndexOf('/') + 1);
+  if (isRgx(rx)) {
+    if (isStr(rx.flags)) { return rx.flags; } // <-- MSIE 6: not supported
+  }
+  return rxu.splitBodyAndFlags(rx).flags;
 };
+
+
+rxu.splitBodyAndFlags = function (rx) {
+  rx = String(rx);
+  var delim = (/^\W/.exec(rx) || false)[0], end, Parts = rxu.RxParts;
+  if (!delim) {
+    throw new Error('Unsupported regexp delimiter: ' + rx.slice(0, 1));
+  }
+  end = rx.lastIndexOf(delim);
+  return new Parts(delim, rx.slice(1, end), rx.slice(end + 1));
+};
+
 
 rxu.join = function rxu_join(rxs, flags, wash) {
   if (isRgx(rxs)) { rxs = rxu.body(rxs); }
@@ -222,12 +231,9 @@ rxu.fmt = stubErr.bind(null, '.fmt()');
 
 rxu.jsonquot = function (x) { return JSON.stringify(String(x)).slice(1, -1); };
 
-rxu.body.raw = function (rx, body) {
-  if (!isRgx(rx)) { return String(rx); }
-  body = rx.source;
-        // ^-- MSIE 6: supported!
-  if (isStr(body)) { return body; }
-  return String(rx).replace(/^\//, '').replace(/\/[a-z]*$/, '');
+rxu.body.raw = function (rx) {
+  if (isRgx(rx) && rx.source) { return rx.source; } // <-- MSIE 6: supported!
+  return rxu.splitBodyAndFlags(rx).body;
 };
 
 rxu.args2match.hint = function (prop, obj) {
@@ -241,6 +247,22 @@ rxu.args2match.hint = function (prop, obj) {
       ' It looks like it might be replacer function arguments.';
   }
   throw new Error(prop);
+};
+
+rxu.cleanupBody = function (b) {
+  b = b.replace(/^(?:\(\?:\))+/g, '');
+  b = b.replace(/(?:\(\?:\))+$/g, '');
+  return b;
+};
+
+rxu.RxParts = function RxParts(d, b, f) {
+  this.delim = d;
+  this.body = rxu.cleanupBody(b);
+  this.flags = f;
+};
+
+rxu.RxParts.prototype.compile = function compileRxParts() {
+  return new RegExp(this.body, this.flags);
 };
 
 

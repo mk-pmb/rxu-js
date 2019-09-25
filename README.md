@@ -32,6 +32,7 @@ For examples see each function's [☂ tests](test/).
   * [rxu.replacer(rWhat, rWith)](#toc-rxu-replacer-rwhat-rwith)
   * [rxu.ifMatch(text, rgx, thenFunc, elseFunc)](#toc-rxu-ifmatch-text-rgx-thenfunc-elsefunc)
   * [rxu.body(rx)](#toc-rxu-body-rx)
+  * [rxu.splitBodyAndFlags(rx)](#toc-rxu-splitbodyandflags-rx)
   * [rxu.join(rxs, flags&#x5B;, wash&#x5D;)](#toc-rxu-join-rxs-flags-wash)
   * [rxu.end(m)](#toc-rxu-end-m)
   * [rxu.contextSlots(m)](#toc-rxu-contextslots-m)
@@ -180,6 +181,13 @@ Construct handy iterators for cases where `rxu.s()` would be disproportionate.
 ### rxu.body(rx), rxu.flags(rx) &nbsp; &nbsp; [☂](test/bodyparts.js)
 Get the body part or flags from a regexp. Uses `.source` and `.flags`
 where available, with fallback to string parsing.
+
+
+<a class="readme-ssi-toc-target" id="toc-rxu-splitbodyandflags-rx" name="toc-rxu-splitbodyandflags-rx"></a>
+### rxu.splitBodyAndFlags(rx) &nbsp; &nbsp; [☂](test/bodyparts.js)
+Find the body, flags, and delimiter used in a regexp.
+Returns an object `{ delim: …, body: …, flags: … }` with a prototype
+that knows a `.compile` method that makes a RegExp.
 
 
 <a class="readme-ssi-toc-target" id="toc-rxu-join-rxs-flags-wash" name="toc-rxu-join-rxs-flags-wash"></a>
