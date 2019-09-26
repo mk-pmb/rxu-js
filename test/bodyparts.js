@@ -4,10 +4,19 @@
 
 var rxu = require('rxu'), eq = require('assert').deepStrictEqual;
 
+function asso(x, y) { return Object.assign({}, x, y); }
+
 (function bodiesAndFlags() {
   function chk(rx, ok) {
     eq([rxu.body(rx), rxu.flags(rx)], [ok.body, ok.flags]);
-    eq(Object.assign({}, rxu.splitBodyAndFlags(rx)), ok);
+    var parts = rxu.splitBodyAndFlags(rx), compiled;
+    eq(asso(parts), ok);
+    if (rx.substr) {
+      compiled = rxu.compile(rx);
+      eq(rxu.isRx(compiled), true);
+      compiled.parts = rxu.splitBodyAndFlags(compiled);
+      eq(asso(compiled.parts), asso(ok, { delim: '/' }));
+    }
   }
 
   chk(/^hello\s(\brave |\new )*world$/mi,

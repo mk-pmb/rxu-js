@@ -120,6 +120,9 @@ rxu.splitBodyAndFlags = function (rx) {
 };
 
 
+rxu.compile = function (rx) { return rxu.splitBodyAndFlags(rx).compile(); };
+
+
 rxu.join = function rxu_join(rxs, flags, wash) {
   if (isRgx(rxs)) { rxs = rxu.body(rxs); }
   if (isStr(rxs)) { return (isFunc(wash) ? wash(rxs) : rxs); }
