@@ -213,8 +213,8 @@ determine…
   * `end`:    the position of the first character after the match.
   * `before`: the text before the match.
   * `after`:  the text after the match.
-  * `grp`, g ∈ {number}: `m[g]` but warping around at 0 and `m.length`.
-  * `grp`, g ∈ {string}: (not supported yet) the named match group `g`.
+  * `grp`, with a number g: `m[g]` but warping around at 0 and `m.length`.
+  * `grp`, with a string g: (not supported yet) the named match group `g`.
 
 
 <a class="readme-ssi-toc-target" id="toc-rxu-contextslots-m" name="toc-rxu-contextslots-m"></a>
@@ -255,6 +255,8 @@ object to a proper match result object, so you can use it with other
   [perldoc-s]: http://perldoc.perl.org/functions/s.html
 
 
+
+&nbsp;
 
 License
 -------
