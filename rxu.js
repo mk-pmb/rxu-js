@@ -84,7 +84,7 @@ rxu.quotemeta = function (text) {
 rxu.rgxMagicChars = /([\!\#\$\(\)\*\+\-\.\/\?\[\\\]\^\{\|\}\s\n])/g;
 
 rxu.replacer = function (rWhat, rWith) {
-  return function (text) { return String(text).replace(rWhat, rWith); };
+  return function subst(input) { return String(input).replace(rWhat, rWith); };
 };
 
 rxu.ifMatch = function rxu_ifMatch(text, rgx, thenFunc, elseFunc) {

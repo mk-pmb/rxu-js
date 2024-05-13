@@ -165,7 +165,7 @@ Don't change it, or you'll break other modules that run in the same VM.
 <a class="readme-ssi-toc-target" id="toc-rxu-replacer-rwhat-rwith" name="toc-rxu-replacer-rwhat-rwith"></a>
 ### rxu.replacer(rWhat, rWith) &nbsp; &nbsp; [☂](test/replacer.js)
 ```js
-  return function (text) { return String(text).replace(rWhat, rWith); };
+  return function subst(input) { return String(input).replace(rWhat, rWith); };
 ```
 Construct handy iterators for cases where `rxu.s()` would be disproportionate.
 
