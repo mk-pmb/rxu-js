@@ -118,21 +118,22 @@ Since you provided no replacer function, it can't be called, but instead:
 That `s` means to substitute (parts of a string),
 name [inspired by Perl][perldoc-s].
 
-Make a function that, given a string, will return it with `pattern` replaced.
-If `text` is provided, don't return said function but instead feed `text` to
-it and return the result.
+Make a function `subst` that, given an `input` string,
+will return `input` with `pattern` replaced.
+If `text` is `undefined` (maybe because it wasn't provided at all),
+return `subst`;
+else, immediately apply `subst` to `input`  and return the result.
 
-`pattern` can be a RegExp or a string. Note that in the latter case, `s` tends
-to replace **all** occurrences of the `pattern`. To have it act as
-`String.prototype.replace()` does, set `opt.limit` to 1.
+`pattern` can be a RegExp or a string.
+  * In case of a string, `s` replaces __all__ occurrences, by constructing a
+    regexp that matches all literal occurrences of `pattern` (flags `sg`) as
+    `$1`. You can change the flags by setting `opt.flags` to a string.
 
 `better` will be used to replace the occurrence(s) of `pattern`. It can be…
   * a function whose `opt` and `memo` properties both contain objects,
     then `s` will assume that function was made by `rxu.wrapAugmentReplacer()`
-    and use it as the replacer. If the `opt` argument to `s` is `true`,
-    the `opt` and `memo` properties will be left as they are, else they're
-    backed up, reset (`memo` to empty object, `opt` to options as described
-    below) and restored after the substitutions are done.
+    and use it as the replacer for each match.
+    See below for special case `opt === true`.
   * anything else that `rxu.wrapAugmentReplacer()` can accept, because that's
     what `s` will use to get a replacer function.
 
@@ -141,9 +142,14 @@ replacer function created by `rxu.wrapAugmentReplacer()`, with some exceptions:
 
   * If `opt` is a number, it will be used as `opt.limit` and no other options
     will be set.
-  * If `opt` is true and `better` looks like it was made by
+  * If `opt` is `true` and `better` looks like it was made by
     `rxu.wrapAugmentReplacer()`, the original `better.opt` and `better.memo`
-    will be kept as they are.
+    will be kept as they are. Otherweise, they are…
+    1. backed up,
+    1. reset (`.memo` to empty object, `.opt` to `opt`),
+    1. (then replacements happen),
+    1. copied onto `subst`,
+    1. restored.
 
 
 <a class="readme-ssi-toc-target" id="toc-rxu-isrx-thing" name="toc-rxu-isrx-thing"></a>

@@ -4,7 +4,22 @@
 
 var rxu = require('rxu'), eq = require('assert').deepStrictEqual;
 
-console.warn('W: no tests in', module.filename.replace(/^\S+\//, ''));
+(function replaceStuff(r, i, w) {
+
+  r = rxu.s(/[aeiou]/ig, '#');
+  i =   [ 'HelLo', 'bRavE', 'neW', 'worlD' ].map(r);
+  eq(i, [ 'H#lL#', 'bR#v#', 'n#W', 'w#rlD' ]);
+
+  r = rxu.s(/[aeiou]/ig, '#', { limit: 3 });
+  i =   [ 'HelLo', 'bRavE', 'neW', 'worlD' ].map(r);
+  eq(i, [ 'H#lL#', 'bR#vE', 'neW', 'worlD' ]);
+
+  i = 'foo bar qux yay wat lul';
+  w = 'foo:bar:qux:yay wat lul';
+  eq(rxu.s(/ /ig, ':', { limit: 3 }, i), w);
+
+
+}());
 
 
 
@@ -14,9 +29,6 @@ console.warn('W: no tests in', module.filename.replace(/^\S+\//, ''));
 
 
 
-
-
-
-
+console.warn('W: too few tests in', module.filename.replace(/^\S+\//, ''));
 
 /*scroll*/

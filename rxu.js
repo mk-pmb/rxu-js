@@ -18,6 +18,13 @@ function stubErr(feature) {
 }
 
 
+function complainFalseyError(e) {
+  if (e) { return e; }
+  e = 'Caught a false-y error: ' + (typeof e) + ' "' + e + '"';
+  return new TypeError(e);
+}
+
+
 //##### BEGIN official API #####//
 
 function rxu(rgx, text) {
@@ -52,21 +59,22 @@ function rxu(rgx, text) {
 
 
 rxu.wrapAugmentReplacer = function rxu_wrapAugmentReplacer(rpl, opt, memo) {
-  var aug = function () {
+  if (!isFunc(rpl)) { rpl = String(rpl); }
+  var aug = function wrappedAugmentedReplacer() {
     return rxu.wrapAugmentReplacer.aug(aug.opt, aug.memo, rpl, arguments);
   };
   aug.opt = (isObj(opt) ? opt : { cnt: 0 });
   aug.memo = (isObj(memo) ? memo : {});
   return aug;
 };
-rxu.wrapAugmentReplacer.aug = function (opt, memo, rpl, args) {
+rxu.wrapAugmentReplacer.aug = function aug(opt, memo, rpl, args) {
   var m = args[0], origText = (isStr(m) ? m : m[0]);
   if (isNum(opt.limit) && (opt.cnt >= opt.limit)) { return origText; }
   if (isStr(m)) { m = rxu.args2match(args); }
   rxu.contextSlots(m);
   m.memo = memo;
   m.opt = opt;
-  m = rpl(m);
+  m = (rpl.call ? rpl(m) : rpl);
   opt.cnt = +(opt.cnt || 0) + 1;
             // ^-- don't use a cached value: rpl might have changed it.
   if (m === undefined) { m = m.opt.undef; }
@@ -86,6 +94,51 @@ rxu.rgxMagicChars = /([\!\#\$\(\)\*\+\-\.\/\?\[\\\]\^\{\|\}\s\n])/g;
 rxu.replacer = function (rWhat, rWith) {
   return function subst(input) { return String(input).replace(rWhat, rWith); };
 };
+
+
+rxu.s = function makeSubstFunc(pattern, better, opt, text) {
+  if (isObj(better)) {
+    text = opt;
+    opt = better;
+    better = undefined;
+  }
+  if (!opt) { opt = {}; }
+  if (isStr(pattern)) {
+    pattern = new RegExp('(' + rxu.quotemeta(pattern) + ')',
+      (isStr(opt.flags) ? opt.flags : 'sg'));
+  }
+  var backupProps = false, subst;
+  if (isFunc(better) && isObj(better.opt) && isObj(better.memo)) {
+    // could be wrapped already
+    if (opt !== true) { backupProps = true; }
+  } else {
+    better = rxu.wrapAugmentReplacer(better, opt);
+  }
+  subst = rxu.replacer(pattern, better);
+  if (backupProps) { subst = rxu.s.makeBackupWrapper(subst, opt); }
+  if (text === undefined) { return subst; }
+  return subst(text);
+};
+rxu.s.makeBackupWrapper = function rxu_s_makeBackupWrapper(origSubst, opt) {
+  function subst(text) {
+    var result, err, origOpt, origMemo;
+    origOpt = origSubst.opt;
+    origSubst.opt = opt;
+    origMemo = origSubst.memo;
+    origSubst.memo = {};
+    try {
+      result = origSubst(text);
+    } catch (caught) {
+      err = complainFalseyError(caught);
+    }
+    origSubst.opt = origOpt;
+    origSubst.memo = origMemo;
+    if (err) { throw err; }
+    return result;
+  }
+  return subst;
+};
+
 
 rxu.ifMatch = function rxu_ifMatch(text, rgx, thenFunc, elseFunc) {
   var match = rgx.exec(text);
